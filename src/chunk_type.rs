@@ -1,4 +1,4 @@
-use std::{fmt, io::Read, str::FromStr};
+use std::{fmt, str::FromStr};
 
 #[derive(Debug)]
 pub enum ChunkTypeError {
