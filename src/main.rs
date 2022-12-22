@@ -1,4 +1,5 @@
 #![warn(clippy::all)]
+#![allow(unused)]
 
 mod args;
 mod chunk;
@@ -6,6 +7,7 @@ mod chunk_type;
 mod commands;
 mod png;
 
+pub use crate::chunk::Chunk;
 pub use crate::chunk_type::ChunkType;
 
 pub type Error = Box<dyn std::error::Error>;
