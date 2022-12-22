@@ -88,6 +88,17 @@ impl Chunk {
         String::from_utf8(self.chunk_data.clone()).map_err(|_| ChunkError::InvalidUtf8String)
     }
 
+    pub fn as_bytes(&self) -> Vec<u8> {
+        self.length
+            .to_be_bytes()
+            .iter()
+            .chain(self.chunk_type.bytes().iter())
+            .chain(self.chunk_data.iter())
+            .chain(self.crc().to_be_bytes().iter())
+            .copied()
+            .collect()
+    }
+
     pub fn calculate_crc(chunk_type: &ChunkType, chunk_data: &Vec<u8>) -> u32 {
         Crc::<u32>::new(&CRC_32_ISO_HDLC).checksum(
             &chunk_type
