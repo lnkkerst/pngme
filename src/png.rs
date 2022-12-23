@@ -1,4 +1,4 @@
-use crate::{Chunk, ChunkType};
+use crate::Chunk;
 use core::fmt;
 
 #[derive(Debug)]
@@ -109,7 +109,7 @@ impl Png {
     }
 
     pub fn as_bytes(&self) -> Vec<u8> {
-        self.header
+        self.header()
             .iter()
             .chain(
                 self.chunks

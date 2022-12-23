@@ -99,7 +99,7 @@ impl Chunk {
             .collect()
     }
 
-    pub fn calculate_crc(chunk_type: &ChunkType, chunk_data: &Vec<u8>) -> u32 {
+    pub fn calculate_crc(chunk_type: &ChunkType, chunk_data: &[u8]) -> u32 {
         Crc::<u32>::new(&CRC_32_ISO_HDLC).checksum(
             &chunk_type
                 .bytes()
