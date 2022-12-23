@@ -1,6 +1,8 @@
-use std::path::PathBuf;
+use std::{path::PathBuf, str::FromStr};
 
 use clap::{Args, Parser, Subcommand};
+
+use crate::{chunk_type::ChunkTypeError, ChunkType};
 
 #[derive(Debug, Parser)]
 #[command(author, version, about, long_about = None)]
@@ -30,7 +32,8 @@ pub struct EncodeArgs {
     pub file_path: PathBuf,
 
     /// Chunk type for storing message
-    pub chunk_type: String,
+    #[clap(value_parser = chunk_parser)]
+    pub chunk_type: ChunkType,
 
     /// Message to be stored
     pub message: String,
@@ -45,7 +48,8 @@ pub struct DecodeArgs {
     pub file_path: PathBuf,
 
     /// Chunk type of message to decode
-    pub chunk_type: String,
+    #[clap(value_parser = chunk_parser)]
+    pub chunk_type: ChunkType,
 }
 
 #[derive(Debug, Args)]
@@ -54,11 +58,22 @@ pub struct RemoveArgs {
     pub file_path: PathBuf,
 
     /// Chunk type of message to remove
-    pub chunk_type: String,
+    #[clap(value_parser = chunk_parser)]
+    pub chunk_type: ChunkType,
 }
 
 #[derive(Debug, Args)]
 pub struct PrintArgs {
     /// PNG file
     pub file_path: PathBuf,
+}
+
+fn chunk_parser(s: &str) -> Result<ChunkType, String> {
+    match ChunkType::from_str(s) {
+        Ok(chunk) => Ok(chunk),
+        Err(ChunkTypeError::InvalidLength) => Err("Chunk type length must be 4".to_string()),
+        Err(ChunkTypeError::InvalidByte) => {
+            Err("Chunk type must consist of uppercase and lowercase ASCII letters".to_string())
+        }
+    }
 }
