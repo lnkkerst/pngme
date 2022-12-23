@@ -21,7 +21,7 @@ impl fmt::Display for ChunkTypeError {
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub struct ChunkType {
     bytes: [u8; 4],
 }

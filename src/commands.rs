@@ -1,9 +1,9 @@
-use std::{fs, str::FromStr};
+use std::fs;
 
 use crate::{
     args::{DecodeArgs, EncodeArgs, PrintArgs, RemoveArgs},
     png::Png,
-    Chunk, ChunkType,
+    Chunk,
 };
 
 /// Encodes a message into a PNG file and saves the result
@@ -15,8 +15,7 @@ pub fn encode(args: &EncodeArgs) -> crate::Result<()> {
         output,
     } = args;
     let mut png = Png::try_from(&fs::read(file_path)?[..])?;
-    let chunk_type = ChunkType::from_str(chunk_type)?;
-    let chunk = Chunk::new(chunk_type, message.as_bytes().to_vec());
+    let chunk = Chunk::new(chunk_type.clone(), message.as_bytes().to_vec());
     png.append_chunk(chunk);
     let output = match output {
         Some(path) => path,
@@ -33,7 +32,7 @@ pub fn decode(args: &DecodeArgs) -> Option<String> {
         chunk_type,
     } = args;
     let png = Png::try_from(&fs::read(file_path).ok()?[..]).ok()?;
-    let chunk = png.chunk_by_type(chunk_type)?;
+    let chunk = png.chunk_by_type(&chunk_type.to_string())?;
     chunk.data_as_string().ok()
 }
 
@@ -44,7 +43,7 @@ pub fn remove(args: &RemoveArgs) -> crate::Result<()> {
         chunk_type,
     } = args;
     let mut png = Png::try_from(&fs::read(file_path)?[..])?;
-    png.remove_chunk(chunk_type)?;
+    png.remove_chunk(&chunk_type.to_string())?;
     fs::write(file_path, png.as_bytes())?;
     Ok(())
 }
